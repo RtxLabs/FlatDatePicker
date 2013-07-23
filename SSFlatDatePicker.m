@@ -257,30 +257,31 @@
   SSFlatDatePickerFlowLayout *flowLayout3 = [[SSFlatDatePickerFlowLayout alloc] init];
 
   if (_datePickerMode == SSFlatDatePickerModeDate) {
+    
+    if (!_scrollerDay) {
+        self.scrollerDay = [[SSFlatDatePickerCollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:flowLayout3];
+        self.scrollerDay.delegate = self;
+        self.scrollerDay.dataSource = self;
+        [self addSubview:self.scrollerDay];
+    }
+    self.scrollerDay.frame = CGRectMake(0, 0, _shortWidth, self.frame.size.height);
+
+    if (!_scrollerMonth) {
+        self.scrollerMonth = [[SSFlatDatePickerCollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:flowLayout2];
+        self.scrollerMonth.delegate = self;
+        self.scrollerMonth.dataSource = self;
+        [self addSubview:self.scrollerMonth];
+    }
+    self.scrollerMonth.frame = CGRectMake(_separatorWidth + _shortWidth, 0, _longWidth, self.frame.size.height);
+      
     if (!_scrollerYear) {
       self.scrollerYear = [[SSFlatDatePickerCollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:flowLayout1 ];
       self.scrollerYear.delegate = self;
       self.scrollerYear.dataSource = self;
       [self addSubview:self.scrollerYear];
     }
-    self.scrollerYear.frame = CGRectMake(0, 0, _longWidth, self.frame.size.height);
-    
-    if (!_scrollerMonth) {
-      self.scrollerMonth = [[SSFlatDatePickerCollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:flowLayout2];
-      self.scrollerMonth.delegate = self;
-      self.scrollerMonth.dataSource = self;
-      [self addSubview:self.scrollerMonth];
-    }
-    self.scrollerMonth.frame = CGRectMake(_separatorWidth + _longWidth, 0, _longWidth, self.frame.size.height);
-    
-    if (!_scrollerDay) {
-      self.scrollerDay = [[SSFlatDatePickerCollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:flowLayout3];
-      self.scrollerDay.delegate = self;
-      self.scrollerDay.dataSource = self;
-      [self addSubview:self.scrollerDay];
-    }
-    self.scrollerDay.frame = CGRectMake(_separatorWidth*2 + _longWidth*2, 0, _shortWidth, self.frame.size.height);
-    
+    self.scrollerYear.frame = CGRectMake(_separatorWidth*2 + _shortWidth+_longWidth, 0, _longWidth, self.frame.size.height);
+      
   } else if (_datePickerMode == SSFlatDatePickerModeTime) {
     if (!_scrollerHour) {
       self.scrollerHour = [[SSFlatDatePickerCollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:flowLayout1];
@@ -487,6 +488,7 @@
   NSInteger currentYearIndex = [self.scrollerYear currentSelectedIndexPath].row;
   if (yIndex != currentYearIndex) {
     [self.scrollerYear scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:yIndex inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredVertically animated:animated];
+      [self.scrollerYear setNeedsDisplay];
   }
   
   NSInteger currentMonthIndex = [self.scrollerMonth currentSelectedIndexPath].row;
